@@ -1,0 +1,61 @@
+<view class="player-container">
+  <view class="cover-section">
+    <view class="cover-wrapper">
+      <image 
+        src="{{currentSong && currentSong.coverUrl}}" 
+        class="cover-image {{isPlaying ? 'rotate' : 'stop-rotate'}}"
+        mode="aspectFill"
+      />
+    </view>
+    <view class="song-info">
+      <text class="song-name">{{currentSong && currentSong.name}}</text>
+      <text class="song-singer">{{currentSong && currentSong.singer}}</text>
+    </view>
+  </view>
+
+  <view class="lyric-section">
+    <scroll-view 
+      class="lyric-scroll" 
+      scroll-y 
+      scroll-into-view="lyric-{{currentLyricIndex}}"
+      scroll-with-animation
+    >
+      <view 
+        wx:for="{{lyrics}}" 
+        wx:key="time" 
+        id="lyric-{{index}}"
+        class="lyric-item {{index === currentLyricIndex ? 'active' : ''}}"
+      >
+        {{item.text}}
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="progress-section">
+    <text class="time-text">{{currentTime}}</text>
+    <slider 
+      class="progress-slider" 
+      value="{{progress}}" 
+      activeColor="#e84c3d" 
+      backgroundColor="#333"
+      block-size="20"
+      bindchange="seekTo"
+    />
+    <text class="time-text">{{duration}}</text>
+  </view>
+
+  <view class="control-section">
+    <view class="control-btn" bindtap="prevSong">
+      <text>⏮</text>
+    </view>
+    <view class="play-btn" bindtap="togglePlay">
+      <text>{{isPlaying ? '⏸' : '▶'}}</text>
+    </view>
+    <view class="control-btn" bindtap="nextSong">
+      <text>⏭</text>
+    </view>
+    <view class="like-btn" bindtap="toggleLike">
+      <text>{{isLiked ? '❤️' : '🤍'}}</text>
+    </view>
+  </view>
+</view>

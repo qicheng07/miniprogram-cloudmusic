@@ -1,0 +1,35 @@
+<view class="create-container">
+  <view class="form-item">
+    <text class="form-label">歌单名称</text>
+    <input 
+      class="form-input" 
+      placeholder="请输入歌单名称" 
+      value="{{name}}"
+      bindinput="onNameInput"
+    />
+  </view>
+
+  <view class="form-item">
+    <text class="form-label">歌单描述</text>
+    <textarea 
+      class="form-textarea" 
+      placeholder="请输入歌单描述（可选）" 
+      value="{{description}}"
+      bindinput="onDescInput"
+      maxlength="100"
+    />
+  </view>
+
+  <view class="form-item">
+    <text class="form-label">是否公开</text>
+    <switch 
+      class="form-switch" 
+      checked="{{isPublic}}" 
+      bindchange="onPublicChange"
+    />
+  </view>
+
+  <view class="submit-btn" bindtap="createPlaylist">
+    <text>创建歌单</text>
+  </view>
+</view>

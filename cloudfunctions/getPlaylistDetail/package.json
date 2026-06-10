@@ -1,0 +1,15 @@
+{
+  "name": "getPlaylistDetail",
+  "version": "1.0.0",
+  "description": "获取歌单详情",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["music", "playlist", "detail"],
+  "author": "",
+  "license": "ISC"
+}

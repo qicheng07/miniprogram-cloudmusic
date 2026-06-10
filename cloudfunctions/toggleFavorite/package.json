@@ -1,0 +1,15 @@
+{
+  "name": "toggleFavorite",
+  "version": "1.0.0",
+  "description": "收藏/取消收藏歌曲",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["music", "favorite"],
+  "author": "",
+  "license": "ISC"
+}

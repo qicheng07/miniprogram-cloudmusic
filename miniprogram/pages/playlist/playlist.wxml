@@ -1,0 +1,38 @@
+<view class="playlist-container">
+  <view wx:if="{{loading}}" class="loading">
+    <text>加载中...</text>
+  </view>
+  
+  <view wx:else class="playlist-content">
+    <view class="playlist-header">
+      <image src="{{playlist && playlist.coverUrl}}" class="playlist-cover" mode="aspectFill" />
+      <view class="playlist-info">
+        <text class="playlist-name">{{playlist && playlist.name}}</text>
+        <text class="playlist-desc">{{playlist && playlist.description}}</text>
+        <text class="playlist-meta">{{formatPlayCount(playlist && playlist.playCount)}} 次播放 · {{(playlist && playlist.songIds && playlist.songIds.length) || 0}} 首歌曲</text>
+      </view>
+    </view>
+
+    <view class="play-all-btn" bindtap="playAll">
+      <text>▶ 播放全部</text>
+    </view>
+
+    <view class="song-list">
+      <view 
+        wx:for="{{songs}}" 
+        wx:key="_id" 
+        class="song-item"
+        bindtap="playSong"
+        data-song="{{item}}"
+      >
+        <view class="song-index">{{index + 1}}</view>
+        <image src="{{item.coverUrl}}" class="song-cover" mode="aspectFill" />
+        <view class="song-info">
+          <text class="song-name">{{item.name}}</text>
+          <text class="song-singer">{{item.singer}} - {{item.album}}</text>
+        </view>
+        <text class="song-duration">{{formatDuration(item.duration)}}</text>
+      </view>
+    </view>
+  </view>
+</view>

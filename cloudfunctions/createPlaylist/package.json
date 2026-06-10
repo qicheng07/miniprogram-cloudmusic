@@ -1,0 +1,15 @@
+{
+  "name": "createPlaylist",
+  "version": "1.0.0",
+  "description": "创建歌单",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["music", "playlist", "create"],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,52 @@
+<view class="container">
+  <swiper class="banner-swiper" indicator-dots autoplay interval="4000" circular>
+    <swiper-item wx:for="{{bannerList}}" wx:key="id">
+      <image src="{{item.image}}" mode="aspectFill" class="banner-image" />
+    </swiper-item>
+  </swiper>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">🎵 热门歌曲</text>
+      <text class="section-more">更多 ›</text>
+    </view>
+    <view class="song-list">
+      <view 
+        wx:for="{{hotSongs}}" 
+        wx:key="_id" 
+        class="song-item" 
+        bindtap="playSong"
+        data-song="{{item}}"
+      >
+        <image src="{{item.coverUrl}}" class="song-cover" mode="aspectFill" />
+        <view class="song-info">
+          <text class="song-name">{{item.name}}</text>
+          <text class="song-singer">{{item.singer}}</text>
+        </view>
+        <view class="song-play-count">
+          <text class="play-count">{{formatPlayCount(item.playCount)}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">📁 推荐歌单</text>
+      <text class="section-more">更多 ›</text>
+    </view>
+    <view class="playlist-grid">
+      <view 
+        wx:for="{{playlists}}" 
+        wx:key="_id" 
+        class="playlist-item"
+        bindtap="goToPlaylist"
+        data-playlist="{{item}}"
+      >
+        <image src="{{item.coverUrl}}" class="playlist-cover" mode="aspectFill" />
+        <text class="playlist-name text-ellipsis">{{item.name}}</text>
+        <text class="playlist-count">{{formatPlayCount(item.playCount)}} 次播放</text>
+      </view>
+    </view>
+  </view>
+</view>

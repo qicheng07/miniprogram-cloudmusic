@@ -1,0 +1,75 @@
+<view class="profile-container">
+  <view class="user-header">
+    <image src="{{userInfo && userInfo.avatarUrl}}" class="avatar" mode="aspectFill" />
+    <view class="user-info">
+      <text class="user-name">{{userInfo && userInfo.nickName}}</text>
+      <text class="user-desc">热爱音乐的人</text>
+    </view>
+  </view>
+
+  <view class="stats-row">
+    <view class="stat-item">
+      <text class="stat-num">{{playlists.length}}</text>
+      <text class="stat-label">歌单</text>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item">
+      <text class="stat-num">{{favoriteSongs.length}}</text>
+      <text class="stat-label">收藏</text>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item">
+      <text class="stat-num">0</text>
+      <text class="stat-label">关注</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">📁 我的歌单</text>
+      <view class="create-btn" bindtap="goToCreatePlaylist">
+        <text>+ 创建</text>
+      </view>
+    </view>
+    <view class="playlist-list">
+      <view 
+        wx:for="{{playlists}}" 
+        wx:key="_id" 
+        class="playlist-item"
+        bindtap="goToPlaylist"
+        data-playlist="{{item}}"
+      >
+        <image src="{{item.coverUrl}}" class="playlist-cover" mode="aspectFill" />
+        <view class="playlist-info">
+          <text class="playlist-name">{{item.name}}</text>
+          <text class="playlist-desc">{{item.description}}</text>
+          <text class="playlist-count">{{(item.songIds && item.songIds.length) || 0}} 首歌曲</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">❤️ 收藏歌曲</text>
+    </view>
+    <view class="song-list">
+      <view 
+        wx:for="{{favoriteSongs}}" 
+        wx:key="_id" 
+        class="song-item"
+        bindtap="playSong"
+        data-song="{{item}}"
+      >
+        <image src="{{item.coverUrl}}" class="song-cover" mode="aspectFill" />
+        <view class="song-info">
+          <text class="song-name">{{item.name}}</text>
+          <text class="song-singer">{{item.singer}}</text>
+        </view>
+        <view class="song-arrow">
+          <text>›</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

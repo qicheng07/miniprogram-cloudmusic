@@ -1,0 +1,184 @@
+.profile-container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 120rpx;
+}
+
+.user-header {
+  background: linear-gradient(135deg, #e84c3d 0%, #c0392b 100%);
+  padding: 60rpx 30rpx 40rpx;
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  border: 4rpx solid rgba(255, 255, 255, 0.5);
+}
+
+.user-info {
+  margin-left: 30rpx;
+}
+
+.user-name {
+  font-size: 36rpx;
+  color: #fff;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 10rpx;
+}
+
+.user-desc {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.stats-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  padding: 30rpx 0;
+}
+
+.stat-item {
+  flex: 1;
+  text-align: center;
+}
+
+.stat-num {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.stat-divider {
+  width: 1rpx;
+  height: 40rpx;
+  background: #eee;
+}
+
+.section {
+  background: #fff;
+  margin: 20rpx;
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.create-btn {
+  font-size: 26rpx;
+  color: #e84c3d;
+  padding: 8rpx 20rpx;
+  border: 2rpx solid #e84c3d;
+  border-radius: 20rpx;
+}
+
+.playlist-list {
+  padding: 0 8rpx;
+}
+
+.playlist-item {
+  display: flex;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.playlist-item:last-child {
+  border-bottom: none;
+}
+
+.playlist-cover {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 8rpx;
+  margin-right: 20rpx;
+}
+
+.playlist-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.playlist-name {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.playlist-desc {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 8rpx;
+}
+
+.playlist-count {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.song-list {
+  padding: 0 8rpx;
+}
+
+.song-item {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.song-item:last-child {
+  border-bottom: none;
+}
+
+.song-cover {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 8rpx;
+  margin-right: 20rpx;
+}
+
+.song-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.song-name {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.song-singer {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.song-arrow {
+  color: #ccc;
+  font-size: 36rpx;
+}
