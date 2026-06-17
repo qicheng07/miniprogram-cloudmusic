@@ -4,8 +4,28 @@
 }
 
 .loading {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 200rpx 0;
+}
+
+.loading-spinner {
+  width: 48rpx;
+  height: 48rpx;
+  border: 4rpx solid #eee;
+  border-top-color: #e84c3d;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 20rpx;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 28rpx;
   color: #999;
 }
 
@@ -56,16 +76,51 @@
   color: #999;
 }
 
+/* Action Bar */
+.action-bar {
+  display: flex;
+  align-items: center;
+  padding: 0 30rpx;
+  margin-bottom: 20rpx;
+}
+
 .play-all-btn {
+  flex: 1;
   background: linear-gradient(135deg, #e84c3d 0%, #c0392b 100%);
   color: #fff;
   text-align: center;
   padding: 24rpx;
-  margin: 0 30rpx 20rpx;
   border-radius: 40rpx;
   font-size: 30rpx;
 }
 
+.play-all-btn:active {
+  opacity: 0.85;
+}
+
+.owner-actions {
+  display: flex;
+  margin-left: 20rpx;
+}
+
+.action-btn {
+  padding: 16rpx 24rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  color: #666;
+  background: #fff;
+  margin-left: 12rpx;
+}
+
+.action-btn.danger {
+  color: #e84c3d;
+}
+
+.action-btn:active {
+  opacity: 0.8;
+}
+
+/* Song List */
 .song-list {
   background: #fff;
   margin: 0 30rpx;
@@ -82,6 +137,10 @@
 
 .song-item:last-child {
   border-bottom: none;
+}
+
+.song-item:active {
+  background: #f9f9f9;
 }
 
 .song-index {
@@ -119,4 +178,131 @@
   font-size: 24rpx;
   color: #999;
   margin-left: 20rpx;
+}
+
+.song-remove {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10rpx;
+  color: #ccc;
+  font-size: 28rpx;
+}
+
+.song-remove:active {
+  color: #e84c3d;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100rpx 0;
+  margin: 0 30rpx;
+  background: #fff;
+  border-radius: 16rpx;
+}
+
+.empty-icon {
+  font-size: 64rpx;
+  margin-bottom: 16rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* Modal */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  width: 560rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 40rpx;
+}
+
+.modal-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  display: block;
+  margin-bottom: 30rpx;
+}
+
+.modal-form-item {
+  margin-bottom: 24rpx;
+}
+
+.modal-label {
+  font-size: 26rpx;
+  color: #666;
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.modal-input {
+  width: 100%;
+  font-size: 30rpx;
+  color: #333;
+  border: 2rpx solid #eee;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+
+.modal-textarea {
+  width: 100%;
+  font-size: 30rpx;
+  color: #333;
+  border: 2rpx solid #eee;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  box-sizing: border-box;
+  min-height: 120rpx;
+}
+
+.modal-btns {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30rpx;
+}
+
+.modal-btn {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx;
+  border-radius: 12rpx;
+  font-size: 30rpx;
+}
+
+.modal-btn.cancel {
+  color: #666;
+  background: #f5f5f5;
+  margin-right: 20rpx;
+}
+
+.modal-btn.confirm {
+  color: #fff;
+  background: #e84c3d;
+}
+
+.modal-btn:active {
+  opacity: 0.8;
 }

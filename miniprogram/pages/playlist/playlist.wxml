@@ -1,8 +1,9 @@
 <view class="playlist-container">
   <view wx:if="{{loading}}" class="loading">
-    <text>加载中...</text>
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
   </view>
-  
+
   <view wx:else class="playlist-content">
     <view class="playlist-header">
       <image src="{{playlist && playlist.coverUrl}}" class="playlist-cover" mode="aspectFill" />
@@ -13,16 +14,27 @@
       </view>
     </view>
 
-    <view class="play-all-btn" bindtap="playAll">
-      <text>▶ 播放全部</text>
+    <view class="action-bar">
+      <view class="play-all-btn" bindtap="playAll">
+        <text>▶ 播放全部</text>
+      </view>
+      <view wx:if="{{isOwner}}" class="owner-actions">
+        <view class="action-btn" bindtap="openEditModal">
+          <text>编辑</text>
+        </view>
+        <view class="action-btn danger" bindtap="deletePlaylist">
+          <text>删除</text>
+        </view>
+      </view>
     </view>
 
-    <view class="song-list">
-      <view 
-        wx:for="{{songs}}" 
-        wx:key="_id" 
+    <view wx:if="{{songs.length > 0}}" class="song-list">
+      <view
+        wx:for="{{songs}}"
+        wx:key="_id"
         class="song-item"
         bindtap="playSong"
+        bindlongpress="onSongLongPress"
         data-song="{{item}}"
       >
         <view class="song-index">{{index + 1}}</view>
@@ -32,6 +44,44 @@
           <text class="song-singer">{{item.singer}} - {{item.album}}</text>
         </view>
         <text class="song-duration">{{formatDuration(item.duration)}}</text>
+        <view wx:if="{{isOwner}}" class="song-remove" catchtap="removeSong" data-song="{{item}}">
+          <text>✕</text>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="empty-state">
+      <text class="empty-icon"></text>
+      <text class="empty-text">歌单暂无歌曲</text>
+    </view>
+  </view>
+
+  <!-- 编辑歌单弹窗 -->
+  <view wx:if="{{showEditModal}}" class="modal-mask" bindtap="closeEditModal">
+    <view class="modal-content" catchtap>
+      <text class="modal-title">编辑歌单</text>
+      <view class="modal-form-item">
+        <text class="modal-label">歌单名称</text>
+        <input
+          class="modal-input"
+          placeholder="请输入歌单名称"
+          value="{{editName}}"
+          bindinput="onEditNameInput"
+          maxlength="30"
+        />
+      </view>
+      <view class="modal-form-item">
+        <text class="modal-label">歌单描述</text>
+        <textarea
+          class="modal-textarea"
+          placeholder="请输入歌单描述（可选）"
+          value="{{editDesc}}"
+          bindinput="onEditDescInput"
+          maxlength="100"
+        />
+      </view>
+      <view class="modal-btns">
+        <view class="modal-btn cancel" bindtap="closeEditModal">取消</view>
+        <view class="modal-btn confirm" bindtap="confirmEdit">保存</view>
       </view>
     </view>
   </view>

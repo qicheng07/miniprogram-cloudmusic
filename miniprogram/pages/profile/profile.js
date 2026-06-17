@@ -1,11 +1,14 @@
 const app = getApp();
+const mockData = require('../../utils/mockData');
 
 Page({
   data: {
     userInfo: null,
     playlists: [],
     favoriteSongs: [],
-    loading: true
+    loading: true,
+    showEditModal: false,
+    editNickName: ''
   },
 
   onLoad: function () {
@@ -18,7 +21,7 @@ Page({
     wx.cloud.callFunction({
       name: 'getUserInfo',
       success: (res) => {
-        if (res.result.success) {
+        if (res.result && res.result.success) {
           this.setData({ userInfo: res.result.data });
         }
       },
@@ -36,61 +39,97 @@ Page({
   getMyPlaylists: function() {
     wx.cloud.callFunction({
       name: 'getPlaylists',
-      data: {
-        limit: 10
-      },
+      data: { limit: 10 },
       success: (res) => {
-        if (res.result.success) {
+        if (res.result && res.result.success && res.result.data && res.result.data.length > 0) {
           this.setData({ playlists: res.result.data });
+        } else {
+          this.setData({ playlists: mockData.getAllPlaylists(6) });
         }
         this.setData({ loading: false });
       },
       fail: () => {
         this.setData({
           loading: false,
-          playlists: this.getMockPlaylists()
+          playlists: mockData.getAllPlaylists(6)
         });
       }
     });
-  },
-
-  getMockPlaylists: function() {
-    return [
-      { _id: '1', name: '我喜欢的音乐', description: '收藏的歌曲', coverUrl: 'https://picsum.photos/200/200?random=41', songIds: ['1', '2', '3'] },
-      { _id: '2', name: '我的歌单', description: '个人歌单', coverUrl: 'https://picsum.photos/200/200?random=42', songIds: ['1', '4'] }
-    ];
   },
 
   getFavoriteSongs: function() {
     wx.cloud.callFunction({
       name: 'getFavoriteSongs',
       success: (res) => {
-        if (res.result.success) {
+        if (res.result && res.result.success && res.result.data && res.result.data.length > 0) {
           this.setData({ favoriteSongs: res.result.data });
+        } else {
+          this.setData({
+            favoriteSongs: mockData.getHotSongs(4)
+          });
         }
       },
       fail: () => {
         this.setData({
-          favoriteSongs: [
-            { _id: '1', name: '晴天', singer: '周杰伦', coverUrl: 'https://picsum.photos/200/200?random=43' },
-            { _id: '2', name: '夜曲', singer: '周杰伦', coverUrl: 'https://picsum.photos/200/200?random=44' }
-          ]
+          favoriteSongs: mockData.getHotSongs(4)
         });
+      }
+    });
+  },
+
+  onChooseAvatar: function(e) {
+    const avatarUrl = e.detail.avatarUrl;
+    this.setData({ 'userInfo.avatarUrl': avatarUrl });
+    wx.cloud.callFunction({
+      name: 'updateUserInfo',
+      data: { avatarUrl: avatarUrl },
+      success: () => {
+        wx.showToast({ title: '头像已更新', icon: 'success' });
+      }
+    });
+  },
+
+  openEditModal: function() {
+    this.setData({
+      showEditModal: true,
+      editNickName: this.data.userInfo ? this.data.userInfo.nickName : ''
+    });
+  },
+
+  closeEditModal: function() {
+    this.setData({ showEditModal: false });
+  },
+
+  onEditNameInput: function(e) {
+    this.setData({ editNickName: e.detail.value });
+  },
+
+  confirmEditName: function() {
+    const nickName = this.data.editNickName.trim();
+    if (!nickName) {
+      wx.showToast({ title: '昵称不能为空', icon: 'none' });
+      return;
+    }
+    wx.cloud.callFunction({
+      name: 'updateUserInfo',
+      data: { nickName: nickName },
+      success: () => {
+        this.setData({
+          'userInfo.nickName': nickName,
+          showEditModal: false
+        });
+        wx.showToast({ title: '昵称已更新', icon: 'success' });
       }
     });
   },
 
   goToPlaylist: function(e) {
     const playlist = e.currentTarget.dataset.playlist;
-    wx.navigateTo({
-      url: `/pages/playlist/playlist?id=${playlist._id}`
-    });
+    wx.navigateTo({ url: '/pages/playlist/playlist?id=' + playlist._id });
   },
 
   goToCreatePlaylist: function() {
-    wx.navigateTo({
-      url: '/pages/create/create'
-    });
+    wx.navigateTo({ url: '/pages/create/create' });
   },
 
   playSong: function(e) {
@@ -99,9 +138,7 @@ Page({
     app.globalData.playList = this.data.favoriteSongs;
     app.globalData.currentIndex = this.data.favoriteSongs.findIndex(s => s._id === song._id);
     app.playSong();
-    wx.navigateTo({
-      url: '/pages/player/player'
-    });
+    wx.navigateTo({ url: '/pages/player/player' });
   },
 
   onShareAppMessage: function() {

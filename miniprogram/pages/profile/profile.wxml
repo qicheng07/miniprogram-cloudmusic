@@ -1,8 +1,10 @@
 <view class="profile-container">
   <view class="user-header">
-    <image src="{{userInfo && userInfo.avatarUrl}}" class="avatar" mode="aspectFill" />
-    <view class="user-info">
-      <text class="user-name">{{userInfo && userInfo.nickName}}</text>
+    <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+      <image src="{{userInfo && userInfo.avatarUrl || '/images/default-avatar.png'}}" class="avatar" mode="aspectFill" />
+    </button>
+    <view class="user-info" bindtap="openEditModal">
+      <text class="user-name">{{userInfo && userInfo.nickName || '点击设置昵称'}}</text>
       <text class="user-desc">热爱音乐的人</text>
     </view>
   </view>
@@ -26,15 +28,15 @@
 
   <view class="section">
     <view class="section-header">
-      <text class="section-title">📁 我的歌单</text>
+      <text class="section-title">我的歌单</text>
       <view class="create-btn" bindtap="goToCreatePlaylist">
         <text>+ 创建</text>
       </view>
     </view>
-    <view class="playlist-list">
-      <view 
-        wx:for="{{playlists}}" 
-        wx:key="_id" 
+    <view wx:if="{{playlists.length > 0}}" class="playlist-list">
+      <view
+        wx:for="{{playlists}}"
+        wx:key="_id"
         class="playlist-item"
         bindtap="goToPlaylist"
         data-playlist="{{item}}"
@@ -47,16 +49,21 @@
         </view>
       </view>
     </view>
+    <view wx:else class="empty-state">
+      <text class="empty-icon"></text>
+      <text class="empty-text">还没有歌单</text>
+      <text class="empty-tip">点击右上角创建歌单</text>
+    </view>
   </view>
 
   <view class="section">
     <view class="section-header">
-      <text class="section-title">❤️ 收藏歌曲</text>
+      <text class="section-title">收藏歌曲</text>
     </view>
-    <view class="song-list">
-      <view 
-        wx:for="{{favoriteSongs}}" 
-        wx:key="_id" 
+    <view wx:if="{{favoriteSongs.length > 0}}" class="song-list">
+      <view
+        wx:for="{{favoriteSongs}}"
+        wx:key="_id"
         class="song-item"
         bindtap="playSong"
         data-song="{{item}}"
@@ -69,6 +76,28 @@
         <view class="song-arrow">
           <text>›</text>
         </view>
+      </view>
+    </view>
+    <view wx:else class="empty-state">
+      <text class="empty-icon">❤️</text>
+      <text class="empty-text">还没有收藏歌曲</text>
+    </view>
+  </view>
+
+  <!-- 编辑昵称弹窗 -->
+  <view wx:if="{{showEditModal}}" class="modal-mask" bindtap="closeEditModal">
+    <view class="modal-content" catchtap>
+      <text class="modal-title">修改昵称</text>
+      <input
+        class="modal-input"
+        placeholder="请输入昵称"
+        value="{{editNickName}}"
+        bindinput="onEditNameInput"
+        maxlength="20"
+      />
+      <view class="modal-btns">
+        <view class="modal-btn cancel" bindtap="closeEditModal">取消</view>
+        <view class="modal-btn confirm" bindtap="confirmEditName">确定</view>
       </view>
     </view>
   </view>

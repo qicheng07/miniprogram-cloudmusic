@@ -1,52 +1,78 @@
 <view class="container">
-  <swiper class="banner-swiper" indicator-dots autoplay interval="4000" circular>
-    <swiper-item wx:for="{{bannerList}}" wx:key="id">
-      <image src="{{item.image}}" mode="aspectFill" class="banner-image" />
-    </swiper-item>
-  </swiper>
-
-  <view class="section">
-    <view class="section-header">
-      <text class="section-title">🎵 热门歌曲</text>
-      <text class="section-more">更多 ›</text>
+  <!-- 骨架屏 -->
+  <view wx:if="{{loading}}" class="skeleton">
+    <view class="skeleton-banner"></view>
+    <view class="skeleton-section">
+      <view class="skeleton-title"></view>
+      <view class="skeleton-line" wx:for="{{5}}" wx:key="*this"></view>
     </view>
-    <view class="song-list">
-      <view 
-        wx:for="{{hotSongs}}" 
-        wx:key="_id" 
-        class="song-item" 
-        bindtap="playSong"
-        data-song="{{item}}"
-      >
-        <image src="{{item.coverUrl}}" class="song-cover" mode="aspectFill" />
-        <view class="song-info">
-          <text class="song-name">{{item.name}}</text>
-          <text class="song-singer">{{item.singer}}</text>
-        </view>
-        <view class="song-play-count">
-          <text class="play-count">{{formatPlayCount(item.playCount)}}</text>
-        </view>
+    <view class="skeleton-section">
+      <view class="skeleton-title"></view>
+      <view class="skeleton-grid">
+        <view class="skeleton-card" wx:for="{{6}}" wx:key="*this"></view>
       </view>
     </view>
   </view>
 
-  <view class="section">
-    <view class="section-header">
-      <text class="section-title">📁 推荐歌单</text>
-      <text class="section-more">更多 ›</text>
-    </view>
-    <view class="playlist-grid">
-      <view 
-        wx:for="{{playlists}}" 
-        wx:key="_id" 
-        class="playlist-item"
-        bindtap="goToPlaylist"
-        data-playlist="{{item}}"
-      >
-        <image src="{{item.coverUrl}}" class="playlist-cover" mode="aspectFill" />
-        <text class="playlist-name text-ellipsis">{{item.name}}</text>
-        <text class="playlist-count">{{formatPlayCount(item.playCount)}} 次播放</text>
+  <!-- 正常内容 -->
+  <block wx:else>
+    <swiper class="banner-swiper" indicator-dots autoplay interval="4000" circular>
+      <swiper-item wx:for="{{bannerList}}" wx:key="id">
+        <image src="{{item.image}}" mode="aspectFill" class="banner-image" />
+      </swiper-item>
+    </swiper>
+
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">热门歌曲</text>
+        <text class="section-more">更多 ›</text>
+      </view>
+      <view wx:if="{{hotSongs.length > 0}}" class="song-list">
+        <view
+          wx:for="{{hotSongs}}"
+          wx:key="_id"
+          class="song-item"
+          bindtap="playSong"
+          data-song="{{item}}"
+        >
+          <image src="{{item.coverUrl}}" class="song-cover" mode="aspectFill" />
+          <view class="song-info">
+            <text class="song-name">{{item.name}}</text>
+            <text class="song-singer">{{item.singer}}</text>
+          </view>
+          <view class="song-play-count">
+            <text class="play-count">{{formatPlayCount(item.playCount)}}</text>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="empty-state">
+        <text class="empty-icon">🎵</text>
+        <text class="empty-text">暂无热门歌曲</text>
       </view>
     </view>
-  </view>
+
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">推荐歌单</text>
+        <text class="section-more">更多 ›</text>
+      </view>
+      <view wx:if="{{playlists.length > 0}}" class="playlist-grid">
+        <view
+          wx:for="{{playlists}}"
+          wx:key="_id"
+          class="playlist-item"
+          bindtap="goToPlaylist"
+          data-playlist="{{item}}"
+        >
+          <image src="{{item.coverUrl}}" class="playlist-cover" mode="aspectFill" />
+          <text class="playlist-name text-ellipsis">{{item.name}}</text>
+          <text class="playlist-count">{{formatPlayCount(item.playCount)}} 次播放</text>
+        </view>
+      </view>
+      <view wx:else class="empty-state">
+        <text class="empty-icon">📁</text>
+        <text class="empty-text">暂无推荐歌单</text>
+      </view>
+    </view>
+  </block>
 </view>

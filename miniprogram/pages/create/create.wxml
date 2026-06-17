@@ -1,35 +1,54 @@
 <view class="create-container">
+  <view class="form-header">
+    <text class="form-header-title">创建新歌单</text>
+    <text class="form-header-tip">创建属于你的音乐空间</text>
+  </view>
+
   <view class="form-item">
-    <text class="form-label">歌单名称</text>
-    <input 
-      class="form-input" 
-      placeholder="请输入歌单名称" 
+    <view class="form-label-row">
+      <text class="form-label">歌单名称</text>
+      <text class="form-count {{nameLength > 28 ? 'count-warn' : ''}}">{{nameLength}}/30</text>
+    </view>
+    <input
+      class="form-input"
+      placeholder="给你的歌单起个名字"
       value="{{name}}"
       bindinput="onNameInput"
+      maxlength="30"
+      focus="{{true}}"
     />
   </view>
 
   <view class="form-item">
-    <text class="form-label">歌单描述</text>
-    <textarea 
-      class="form-textarea" 
-      placeholder="请输入歌单描述（可选）" 
+    <view class="form-label-row">
+      <text class="form-label">歌单描述</text>
+      <text class="form-count {{descLength > 90 ? 'count-warn' : ''}}">{{descLength}}/100</text>
+    </view>
+    <textarea
+      class="form-textarea"
+      placeholder="写一段描述，让更多人发现你的歌单（可选）"
       value="{{description}}"
       bindinput="onDescInput"
       maxlength="100"
+      auto-height="{{false}}"
     />
   </view>
 
-  <view class="form-item">
-    <text class="form-label">是否公开</text>
-    <switch 
-      class="form-switch" 
-      checked="{{isPublic}}" 
+  <view class="form-item form-switch-item">
+    <text class="form-label">公开歌单</text>
+    <switch
+      class="form-switch"
+      checked="{{isPublic}}"
       bindchange="onPublicChange"
+      color="#e84c3d"
     />
   </view>
 
-  <view class="submit-btn" bindtap="createPlaylist">
-    <text>创建歌单</text>
+  <view class="submit-btn {{submitting ? 'btn-disabled' : ''}}" bindtap="createPlaylist">
+    <text>{{submitting ? '创建中...' : '创建歌单'}}</text>
+  </view>
+
+  <view class="form-tip">
+    <text>创建后可随时编辑歌单信息和添加歌曲</text>
   </view>
 </view>

@@ -1,4 +1,5 @@
 const app = getApp();
+const mockData = require('../../utils/mockData');
 
 Page({
   data: {
@@ -9,7 +10,10 @@ Page({
     duration: '00:00',
     lyrics: [],
     currentLyricIndex: 0,
-    isLiked: false
+    isLiked: false,
+    playMode: 0,
+    playModeText: '列表循环',
+    playModeIcon: ''
   },
 
   onLoad: function () {
@@ -19,18 +23,32 @@ Page({
     });
     this.loadLyrics();
     this.updateProgress();
+    this.checkFavorite();
   },
 
   onShow: function() {
-    this.setData({
-      isPlaying: app.globalData.isPlaying
-    });
+    this.setData({ isPlaying: app.globalData.isPlaying });
+    this.checkFavorite();
   },
 
   onUnload: function() {
     if (this.progressTimer) {
       clearInterval(this.progressTimer);
     }
+  },
+
+  checkFavorite: function() {
+    const song = this.data.currentSong;
+    if (!song) return;
+    wx.cloud.callFunction({
+      name: 'toggleFavorite',
+      data: { songId: song._id, checkOnly: true },
+      success: (res) => {
+        if (res.result && res.result.success) {
+          this.setData({ isLiked: res.result.isFavorite });
+        }
+      }
+    });
   },
 
   loadLyrics: function() {
@@ -91,7 +109,7 @@ Page({
   formatTime: function(seconds) {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
   },
 
   updateLyricIndex: function(currentTime) {
@@ -121,6 +139,7 @@ Page({
       currentTime: '00:00'
     });
     this.loadLyrics();
+    this.checkFavorite();
   },
 
   nextSong: function() {
@@ -131,6 +150,7 @@ Page({
       currentTime: '00:00'
     });
     this.loadLyrics();
+    this.checkFavorite();
   },
 
   seekTo: function(e) {
@@ -141,26 +161,35 @@ Page({
     }
   },
 
+  togglePlayMode: function() {
+    const modes = [
+      { mode: 0, text: '列表循环', icon: '🔁' },
+      { mode: 1, text: '单曲循环', icon: '' },
+      { mode: 2, text: '随机播放', icon: '🔀' }
+    ];
+    const nextIndex = (this.data.playMode + 1) % modes.length;
+    this.setData({
+      playMode: modes[nextIndex].mode,
+      playModeText: modes[nextIndex].text,
+      playModeIcon: modes[nextIndex].icon
+    });
+    wx.showToast({ title: modes[nextIndex].text, icon: 'none' });
+  },
+
   toggleLike: function() {
     const songId = this.data.currentSong._id;
     wx.cloud.callFunction({
       name: 'toggleFavorite',
-      data: { songId },
+      data: { songId: songId },
       success: (res) => {
-        if (res.result.success) {
+        if (res.result && res.result.success) {
           this.setData({ isLiked: res.result.isFavorite });
-          wx.showToast({
-            title: res.result.message,
-            icon: 'success'
-          });
+          wx.showToast({ title: res.result.message, icon: 'success' });
         }
       },
       fail: () => {
         this.setData({ isLiked: !this.data.isLiked });
-        wx.showToast({
-          title: this.data.isLiked ? '取消收藏' : '收藏成功',
-          icon: 'success'
-        });
+        wx.showToast({ title: this.data.isLiked ? '取消收藏' : '收藏成功', icon: 'success' });
       }
     });
   }

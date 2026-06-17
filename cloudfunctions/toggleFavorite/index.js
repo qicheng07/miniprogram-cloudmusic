@@ -7,20 +7,17 @@ cloud.init({
 const db = cloud.database()
 
 exports.main = async (event, context) => {
-  const { songId } = event
+  const { songId, checkOnly } = event
   const { OPENID: userId } = cloud.getWXContext()
-  
+
   if (!songId) {
-    return {
-      success: false,
-      message: '请传入歌曲ID'
-    }
+    return { success: false, message: '请传入歌曲ID' }
   }
-  
+
   try {
     const userResult = await db.collection('users').doc(userId).get()
     let user = userResult.data
-    
+
     if (!user) {
       user = {
         _id: userId,
@@ -32,10 +29,14 @@ exports.main = async (event, context) => {
       }
       await db.collection('users').add({ data: user })
     }
-    
+
     const favoriteSongIds = user.favoriteSongIds || []
     const isFavorite = favoriteSongIds.includes(songId)
-    
+
+    if (checkOnly) {
+      return { success: true, isFavorite: isFavorite }
+    }
+
     let updatedIds
     let message
     if (isFavorite) {
@@ -45,23 +46,16 @@ exports.main = async (event, context) => {
       updatedIds = [...favoriteSongIds, songId]
       message = '收藏成功'
     }
-    
+
     await db.collection('users').doc(userId).update({
       data: {
         favoriteSongIds: updatedIds,
         updatedAt: db.serverDate()
       }
     })
-    
-    return {
-      success: true,
-      isFavorite: !isFavorite,
-      message
-    }
+
+    return { success: true, isFavorite: !isFavorite, message }
   } catch (err) {
-    return {
-      success: false,
-      message: err.message
-    }
+    return { success: false, message: err.message }
   }
 }
