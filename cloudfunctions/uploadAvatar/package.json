@@ -1,0 +1,15 @@
+{
+  "name": "uploadAvatar",
+  "version": "1.0.0",
+  "description": "上传用户头像到云存储",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["avatar", "upload", "storage"],
+  "author": "",
+  "license": "MIT"
+}

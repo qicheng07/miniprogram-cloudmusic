@@ -12,16 +12,48 @@ Page({
     playlists: [],
     loading: true,
     refreshing: false,
-    hasData: false
+    hasData: false,
+    error: false,
+    userInfo: null,
+    hasLogin: false,
+    showLoginBtn: false
   },
 
   onLoad: function () {
+    this.checkUserLogin();
     this.loadHotSongs();
     this.loadPlaylists();
   },
 
+  onShow: function() {
+    this.checkUserLogin();
+  },
+
+  checkUserLogin: function() {
+    const userInfo = app.globalData.userInfo;
+    const hasLogin = app.globalData.hasLogin;
+    this.setData({
+      userInfo: userInfo,
+      hasLogin: hasLogin,
+      showLoginBtn: !hasLogin
+    });
+  },
+
+  onLogin: function() {
+    const that = this;
+    app.getUserProfile(function(userInfo) {
+      if (userInfo) {
+        that.setData({
+          userInfo: userInfo,
+          hasLogin: true,
+          showLoginBtn: false
+        });
+      }
+    });
+  },
+
   onPullDownRefresh: function() {
-    this.setData({ refreshing: true });
+    this.setData({ refreshing: true, error: false });
     Promise.all([
       this.loadHotSongs(),
       this.loadPlaylists()
@@ -29,26 +61,32 @@ Page({
       this.setData({ refreshing: false });
       wx.stopPullDownRefresh();
     }).catch(() => {
-      this.setData({ refreshing: false });
+      this.setData({ refreshing: false, error: true });
       wx.stopPullDownRefresh();
+      wx.showToast({ title: '加载失败，请重试', icon: 'none' });
     });
   },
 
   loadHotSongs: function() {
     return new Promise((resolve) => {
+      wx.showLoading({ title: '加载中...', mask: true });
       wx.cloud.callFunction({
         name: 'getHotSongs',
         data: { limit: 10 },
         success: (res) => {
+          wx.hideLoading();
           if (res.result && res.result.success && res.result.data && res.result.data.length > 0) {
-            this.setData({ hotSongs: res.result.data, hasData: true });
+            this.setData({ hotSongs: res.result.data, hasData: true, error: false });
           } else {
-            this.setData({ hotSongs: mockData.getHotSongs(10), hasData: true });
+            this.setData({ hotSongs: mockData.getHotSongs(10), hasData: true, error: false });
           }
           resolve();
         },
-        fail: () => {
-          this.setData({ hotSongs: mockData.getHotSongs(10), hasData: true });
+        fail: (err) => {
+          wx.hideLoading();
+          console.error('加载热门歌曲失败:', err);
+          this.setData({ hotSongs: mockData.getHotSongs(10), hasData: true, error: false });
+          wx.showToast({ title: '网络异常，已使用本地数据', icon: 'none' });
           resolve();
         }
       });
@@ -69,7 +107,8 @@ Page({
           this.setData({ loading: false });
           resolve();
         },
-        fail: () => {
+        fail: (err) => {
+          console.error('加载歌单失败:', err);
           this.setData({ playlists: mockData.getAllPlaylists(6), loading: false });
           resolve();
         }
@@ -89,6 +128,10 @@ Page({
   goToPlaylist: function(e) {
     const playlist = e.currentTarget.dataset.playlist;
     wx.navigateTo({ url: '/pages/playlist/playlist?id=' + playlist._id });
+  },
+
+  goToVideo: function() {
+    wx.navigateTo({ url: '/pages/video/video' });
   },
 
   formatPlayCount: function(count) {

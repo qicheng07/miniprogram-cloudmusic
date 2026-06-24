@@ -1,0 +1,25 @@
+<view wx:if="{{show && currentSong}}" class="music-player" bindtap="goToPlayer">
+  <image src="{{currentSong.coverUrl}}" class="player-cover" mode="aspectFill" />
+  <view class="player-info">
+    <text class="player-name text-ellipsis">{{currentSong.name}}</text>
+    <text class="player-singer">{{currentSong.singer}}</text>
+  </view>
+  <view class="player-controls">
+    <view class="progress-bar" bindtap="seekTo">
+      <view class="progress-fill" style="width: {{progress}}%"></view>
+    </view>
+    <view class="progress-time">
+      <text class="time-current">{{currentTime}}</text>
+      <text class="time-duration">{{duration}}</text>
+    </view>
+  </view>
+  <view class="player-buttons">
+    <view class="btn-play" bindtap="togglePlay" catchtap="true">
+      <text wx:if="{{isPlaying}}" class="play-icon">⏸</text>
+      <text wx:else class="play-icon">▶</text>
+    </view>
+    <view class="btn-next" bindtap="nextSong" catchtap="true">
+      <text class="next-icon">⏭</text>
+    </view>
+  </view>
+</view>

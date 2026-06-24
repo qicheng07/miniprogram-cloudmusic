@@ -19,14 +19,23 @@
       scroll-y
       scroll-into-view="lyric-{{currentLyricIndex}}"
       scroll-with-animation
+      enhanced
+      :show-scrollbar="false"
     >
-      <view
-        wx:for="{{lyrics}}"
-        wx:key="time"
-        id="lyric-{{index}}"
-        class="lyric-item {{index === currentLyricIndex ? 'active' : ''}}"
-      >
-        {{item.text}}
+      <view wx:if="{{lyrics.length === 0}}" class="no-lyric">
+        <text class="no-lyric-icon">🎵</text>
+        <text class="no-lyric-text">暂无歌词</text>
+      </view>
+      <view wx:else>
+        <view
+          wx:for="{{lyrics}}"
+          wx:key="time"
+          id="lyric-{{index}}"
+          class="lyric-item"
+          :class="{ active: index === currentLyricIndex }"
+        >
+          {{item.text}}
+        </view>
       </view>
     </scroll-view>
   </view>
@@ -49,13 +58,13 @@
       <text>{{playModeIcon}}</text>
     </view>
     <view class="control-btn" bindtap="prevSong">
-      <text></text>
+      <text>⏮</text>
     </view>
     <view class="play-btn" bindtap="togglePlay">
-      <text>{{isPlaying ? '' : '▶'}}</text>
+      <text>{{isPlaying ? '⏸' : '▶'}}</text>
     </view>
     <view class="control-btn" bindtap="nextSong">
-      <text></text>
+      <text>⏭</text>
     </view>
     <view class="control-btn like-btn" bindtap="toggleLike">
       <text>{{isLiked ? '❤️' : '🤍'}}</text>

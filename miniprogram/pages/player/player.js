@@ -13,10 +13,21 @@ Page({
     isLiked: false,
     playMode: 0,
     playModeText: '列表循环',
-    playModeIcon: ''
+    playModeIcon: '🔁',
+    hasLyrics: false
   },
 
   onLoad: function () {
+    const song = app.globalData.currentSong;
+    if (!song) {
+      const songs = mockData.getHotSongs(10);
+      if (songs.length > 0) {
+        app.globalData.currentSong = songs[0];
+        app.globalData.playList = songs;
+        app.globalData.currentIndex = 0;
+      }
+    }
+    
     this.setData({
       currentSong: app.globalData.currentSong,
       isPlaying: app.globalData.isPlaying
@@ -24,6 +35,10 @@ Page({
     this.loadLyrics();
     this.updateProgress();
     this.checkFavorite();
+    
+    if (!app.globalData.isPlaying && app.globalData.currentSong) {
+      app.playSong();
+    }
   },
 
   onShow: function() {
@@ -53,20 +68,48 @@ Page({
 
   loadLyrics: function() {
     const song = this.data.currentSong;
+    let lyrics = [];
+    
     if (song && song.lyrics) {
       try {
-        const lyrics = JSON.parse(song.lyrics);
-        const lyricArray = Object.keys(lyrics).map(time => ({
-          time: parseInt(time),
-          text: lyrics[time]
-        })).sort((a, b) => a.time - b.time);
-        this.setData({ lyrics: lyricArray });
+        lyrics = this.parseLRC(song.lyrics);
       } catch (e) {
-        this.setData({ lyrics: [] });
+        console.error('歌词解析失败:', e);
+        lyrics = this.getMockLyrics();
       }
     } else {
-      this.setData({ lyrics: this.getMockLyrics() });
+      lyrics = this.getMockLyrics();
     }
+    
+    this.setData({ 
+      lyrics: lyrics,
+      hasLyrics: lyrics.length > 0
+    });
+    console.log('歌词加载完成:', lyrics.length, '行');
+  },
+
+  // LRC 歌词解析
+  parseLRC: function(lrcText) {
+    const lines = lrcText.split('\n');
+    const lyrics = [];
+    const timeRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/;
+    
+    lines.forEach(line => {
+      const match = line.match(timeRegex);
+      if (match) {
+        const minutes = parseInt(match[1]);
+        const seconds = parseInt(match[2]);
+        const centiseconds = parseInt(match[3].padEnd(3, '0'));
+        const time = minutes * 60 + seconds + centiseconds / 1000;
+        const text = line.replace(timeRegex, '').trim();
+        
+        if (text) {
+          lyrics.push({ time, text });
+        }
+      }
+    });
+    
+    return lyrics.sort((a, b) => a.time - b.time);
   },
 
   getMockLyrics: function() {

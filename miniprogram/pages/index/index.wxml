@@ -1,4 +1,19 @@
 <view class="container">
+  <!-- 用户登录区域 -->
+  <view class="user-header">
+    <view wx:if="{{hasLogin && userInfo}}" class="user-info">
+      <image src="{{userInfo.avatarUrl}}" class="user-avatar" mode="aspectFill" />
+      <view class="user-welcome">
+        <text class="welcome-text">你好，{{userInfo.nickName}}</text>
+        <text class="welcome-sub">发现好音乐</text>
+      </view>
+    </view>
+    <button wx:else class="login-btn" bindtap="onLogin">
+      <text class="login-icon">👤</text>
+      <text class="login-text">点击登录</text>
+    </button>
+  </view>
+
   <!-- 骨架屏 -->
   <view wx:if="{{loading}}" class="skeleton">
     <view class="skeleton-banner"></view>
@@ -16,11 +31,27 @@
 
   <!-- 正常内容 -->
   <block wx:else>
+    <!-- 错误提示 -->
+    <view wx:if="{{error}}" class="error-tip">
+      <text class="error-icon">⚠️</text>
+      <text class="error-text">加载失败，请下拉刷新重试</text>
+    </view>
+
     <swiper class="banner-swiper" indicator-dots autoplay interval="4000" circular>
       <swiper-item wx:for="{{bannerList}}" wx:key="id">
         <image src="{{item.image}}" mode="aspectFill" class="banner-image" />
       </swiper-item>
     </swiper>
+
+    <!-- 视频入口 -->
+    <view class="video-entrance" bindtap="goToVideo">
+      <view class="entrance-icon">🎬</view>
+      <view class="entrance-content">
+        <text class="entrance-title">热门歌曲视频</text>
+        <text class="entrance-desc">观看100首热门歌曲合集</text>
+      </view>
+      <view class="entrance-arrow">›</view>
+    </view>
 
     <view class="section">
       <view class="section-header">
@@ -75,4 +106,7 @@
       </view>
     </view>
   </block>
+
+  <!-- 底部音乐播放器 -->
+  <music-player show="{{true}}" />
 </view>

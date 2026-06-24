@@ -1,0 +1,91 @@
+<view class="video-container">
+  <view class="header">
+    <view class="back-btn" bindtap="goBack">
+      <text class="back-icon">←</text>
+    </view>
+    <text class="header-title">热门歌曲合集</text>
+    <view class="placeholder"></view>
+  </view>
+
+  <view class="video-card">
+    <view class="video-cover">
+      <image 
+        src="https://picsum.photos/640/360?random=200" 
+        mode="aspectFill" 
+        class="cover-image"
+      />
+      <view class="play-overlay" bindtap="playMusic">
+        <text class="play-icon">▶</text>
+        <text class="play-text">点击播放音乐</text>
+      </view>
+    </view>
+    <view class="video-meta">
+      <text class="video-title">2026年最火的100首热门歌曲合集</text>
+      <view class="video-stats">
+        <text class="stat-item">🎵 100首歌曲</text>
+        <text class="stat-item">👁️ 1000万+播放</text>
+        <text class="stat-item">❤️ 50万+收藏</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">🎵 精选歌曲</text>
+    </view>
+    <view class="song-list">
+      <view 
+        wx:for="{{songList}}" 
+        wx:key="_id" 
+        class="song-item"
+        bindtap="playSong"
+        data-song="{{item}}"
+      >
+        <image src="{{item.coverUrl}}" class="song-cover" mode="aspectFill" />
+        <view class="song-info">
+          <text class="song-name">{{item.name}}</text>
+          <text class="song-singer">{{item.singer}}</text>
+        </view>
+        <view class="play-btn-small" bindtap="playSong" data-song="{{item}}">
+          <text>▶</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">🔗 获取视频链接</text>
+    </view>
+    <view class="link-section">
+      <view class="link-info">
+        <text class="link-label">视频链接</text>
+        <text class="link-value">https://www.bilibili.com/video/BV1K2EM6UESg</text>
+      </view>
+      <button class="copy-btn" bindtap="copyLink">
+        <text>📋 复制链接</text>
+      </button>
+      <text class="link-hint">复制后可在浏览器中打开观看完整视频</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">💡 使用说明</text>
+    </view>
+    <view class="guide-list">
+      <view class="guide-item">
+        <text class="guide-icon">1️⃣</text>
+        <text class="guide-text">点击歌曲可在小程序内播放</text>
+      </view>
+      <view class="guide-item">
+        <text class="guide-icon">2️⃣</text>
+        <text class="guide-text">复制链接到浏览器观看完整视频</text>
+      </view>
+      <view class="guide-item">
+        <text class="guide-icon">3️⃣</text>
+        <text class="guide-text">支持后台播放音乐</text>
+      </view>
+    </view>
+  </view>
+</view>
