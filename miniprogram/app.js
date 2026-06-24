@@ -18,11 +18,55 @@ App({
         traceUser: true,
       });
     }
-    this.globalData.audioCtx = wx.createInnerAudioContext();
-    this.globalData.audioCtx.onEnded(() => {
+    this.initAudioContext();
+    this.checkLoginStatus();
+  },
+
+  initAudioContext: function() {
+    const audioCtx = wx.getBackgroundAudioManager();
+    
+    audioCtx.onEnded(() => {
+      console.log('音频播放结束');
       this.nextSong();
     });
-    this.checkLoginStatus();
+    
+    audioCtx.onError((err) => {
+      console.error('音频播放错误:', err);
+      wx.showToast({ title: '播放失败: ' + err.errMsg, icon: 'none' });
+      this.globalData.isPlaying = false;
+    });
+    
+    audioCtx.onCanplay(() => {
+      console.log('音频可以播放了');
+    });
+    
+    audioCtx.onWaiting(() => {
+      console.log('音频缓冲中...');
+    });
+    
+    audioCtx.onTimeUpdate(() => {
+      this.onAudioTimeUpdate();
+    });
+    
+    audioCtx.onPlay(() => {
+      console.log('音频开始播放');
+      this.globalData.isPlaying = true;
+    });
+    
+    audioCtx.onPause(() => {
+      console.log('音频暂停');
+      this.globalData.isPlaying = false;
+    });
+    
+    this.globalData.audioCtx = audioCtx;
+  },
+
+  onAudioTimeUpdate: function() {
+    const pages = getCurrentPages();
+    const playerPage = pages.find(p => p.route === 'pages/player/player');
+    if (playerPage) {
+      playerPage.updateProgress();
+    }
   },
 
   checkLoginStatus: function() {
@@ -96,8 +140,10 @@ App({
   playSong: function() {
     const { audioCtx, currentSong } = this.globalData;
     if (currentSong && audioCtx) {
+      audioCtx.title = currentSong.name || '未知歌曲';
+      audioCtx.singer = currentSong.singer || '未知歌手';
+      audioCtx.coverImgUrl = currentSong.coverUrl || '';
       audioCtx.src = currentSong.audioUrl;
-      audioCtx.play();
       this.globalData.isPlaying = true;
     }
   },
@@ -106,7 +152,13 @@ App({
     const { audioCtx } = this.globalData;
     if (audioCtx) {
       audioCtx.pause();
-      this.globalData.isPlaying = false;
+    }
+  },
+  
+  resumeSong: function() {
+    const { audioCtx } = this.globalData;
+    if (audioCtx) {
+      audioCtx.play();
     }
   },
 

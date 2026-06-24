@@ -14,7 +14,9 @@ Page({
     playMode: 0,
     playModeText: '列表循环',
     playModeIcon: '🔁',
-    hasLyrics: false
+    hasLyrics: false,
+    downloading: false,
+    downloadProgress: 0
   },
 
   onLoad: function () {
@@ -37,8 +39,37 @@ Page({
     this.checkFavorite();
     
     if (!app.globalData.isPlaying && app.globalData.currentSong) {
-      app.playSong();
+      this.startPlay();
     }
+  },
+
+  startPlay: function() {
+    const song = app.globalData.currentSong;
+    if (!song) {
+      wx.showToast({ title: '暂无歌曲', icon: 'none' });
+      return;
+    }
+    
+    console.log('开始播放:', song.name);
+    wx.showLoading({ title: '加载音频...' });
+    
+    const audioCtx = app.globalData.audioCtx;
+    if (!audioCtx) {
+      wx.hideLoading();
+      wx.showToast({ title: '音频初始化失败', icon: 'none' });
+      return;
+    }
+    
+    audioCtx.title = song.name;
+    audioCtx.singer = song.singer;
+    audioCtx.coverImgUrl = song.coverUrl;
+    audioCtx.src = song.audioUrl;
+    
+    setTimeout(() => {
+      wx.hideLoading();
+      this.setData({ isPlaying: true });
+      console.log('音频播放成功');
+    }, 1000);
   },
 
   onShow: function() {
@@ -169,7 +200,7 @@ Page({
     if (this.data.isPlaying) {
       app.pauseSong();
     } else {
-      app.playSong();
+      app.resumeSong();
     }
     this.setData({ isPlaying: !this.data.isPlaying });
   },
@@ -235,5 +266,78 @@ Page({
         wx.showToast({ title: this.data.isLiked ? '取消收藏' : '收藏成功', icon: 'success' });
       }
     });
+  },
+
+  downloadAudio: function() {
+    const song = this.data.currentSong;
+    if (!song || !song.audioUrl) {
+      wx.showToast({ title: '暂无音频可下载', icon: 'none' });
+      return;
+    }
+
+    this.setData({ downloading: true, downloadProgress: 0 });
+
+    wx.downloadFile({
+      url: song.audioUrl,
+      success: (res) => {
+        if (res.statusCode === 200) {
+          const tempFilePath = res.tempFilePath;
+          
+          wx.saveFile({
+            tempFilePath: tempFilePath,
+            success: (saveRes) => {
+              const savedFilePath = saveRes.savedFilePath;
+              this.setData({ downloading: false, downloadProgress: 100 });
+              
+              wx.showModal({
+                title: '下载成功',
+                content: `音频已保存到本地\n文件名: ${song.name}.mp3\n路径: ${savedFilePath}`,
+                showCancel: false,
+                confirmText: '知道了'
+              });
+
+              this.saveDownloadHistory(song, savedFilePath);
+            },
+            fail: (err) => {
+              console.error('保存文件失败:', err);
+              this.setData({ downloading: false });
+              wx.showToast({ title: '保存失败', icon: 'none' });
+            }
+          });
+        } else {
+          this.setData({ downloading: false });
+          wx.showToast({ title: '下载失败', icon: 'none' });
+        }
+      },
+      fail: (err) => {
+        console.error('下载失败:', err);
+        this.setData({ downloading: false });
+        wx.showToast({ title: '下载失败，请检查网络', icon: 'none' });
+      },
+      progress: (res) => {
+        const progress = Math.round((res.totalBytesWritten / res.totalBytesExpectedToWrite) * 100);
+        this.setData({ downloadProgress: progress });
+      }
+    });
+  },
+
+  saveDownloadHistory: function(song, filePath) {
+    const history = wx.getStorageSync('downloadHistory') || [];
+    const record = {
+      songId: song._id,
+      name: song.name,
+      singer: song.singer,
+      filePath: filePath,
+      downloadTime: new Date().toLocaleString()
+    };
+    
+    const existingIndex = history.findIndex(h => h.songId === song._id);
+    if (existingIndex >= 0) {
+      history[existingIndex] = record;
+    } else {
+      history.unshift(record);
+    }
+    
+    wx.setStorageSync('downloadHistory', history.slice(0, 20));
   }
 });

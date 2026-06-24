@@ -69,5 +69,15 @@
     <view class="control-btn like-btn" bindtap="toggleLike">
       <text>{{isLiked ? '❤️' : '🤍'}}</text>
     </view>
+    <view class="control-btn download-btn" bindtap="downloadAudio">
+      <text>⬇️</text>
+    </view>
+  </view>
+
+  <view wx:if="{{downloading}}" class="download-progress">
+    <view class="progress-bar">
+      <view class="progress-fill" :style="{width: downloadProgress + '%'}"></view>
+    </view>
+    <text class="progress-text">{{downloadProgress}}%</text>
   </view>
 </view>
